@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <!-- component -->
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="flex min-h-screen items-center justify-center">
+            <div class="min-h-1/2 bg-blue-900  border border-gray-900 rounded-2xl">
+                <div class="mx-4 sm:mx-24 md:mx-34 lg:mx-56 mx-auto  flex items-center space-y-4 py-16 font-semibold flex-col">
+                    <h1 class="text-white text-2xl">Welcome "{{user.username}}" To Translage Profile</h1>
+                    <h1 class="text-gray-300 ">Complete Your Profile</h1>
+                    {% render_field form.first_name  class="w-full p-2 bg-blue-200 rounded-md  border border-gray-700 focus:border-blue-800 text-gray-700 "  placeholder="First Name" %}
+                    {% render_field form.last_name  class="w-full p-2 bg-blue-200 rounded-md  border border-gray-700 focus:border-blue-800"  placeholder="Last Name" %}
+                    {% render_field form.role  class="w-full p-2 bg-blue-200 rounded-md  border border-gray-700 focus:border-blue-800"  placeholder="****" %}
+                    <div class="w-full text-gray-50">
+                        <p class="mb-2">Select Language</p>
+                        <div class="text-gray-200">
+                            <input type="hidden" name="is_Igbo" value="off">
+                            <input type="checkbox" id="is_Igbo" name="is_Igbo" value="on">
+                            <label for="is_Igbo" class="ml-1">Igbo</label><br>
+                            
+                            <input type="hidden" name="is_hausa" value="off">
+                            <input type="checkbox" id="is_hausa" name="is_hausa" value="on">
+                            <label for="is_hausa" class="ml-1">Hausa</label><br>
+                            
+                            <input type="hidden" name="is_Yoruba" value="off">
+                            <input type="checkbox" id="is_Yoruba" name="is_Yoruba" value="on">
+                            <label for="is_Yoruba" class="ml-1">Yoruba</label>
+                        </div>
+                    </div>
+                    <input class="w-full p-2 bg-gray-50 rounded-full font-bold text-gray-900 border border-gray-700 "
+                        type="submit">
+
+                        <p class="text-gray-500">&copy; <span id="currentYear"></span> Translage. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+        var currentYear = new Date().getFullYear();
+
+        // Update the HTML element with the current year
+        document.getElementById("currentYear").innerHTML = currentYear;
+    </script>
+
+{% endblock %}
