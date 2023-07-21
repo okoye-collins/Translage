@@ -5,6 +5,7 @@ from accounts.models import UserProfile
 from accounts.forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 import nltk
+from .models import SentenceTokenize, File
 
 # Create your views here.
 
@@ -64,7 +65,8 @@ def home(request):
             uploaded_file = request.FILES['file']
             file_contents = uploaded_file.read().decode('utf-8')
             sentences = tokenize_sentences(file_contents)
-            print('------------*******', sentences)
+            store_file = File.objects.create(file=uploaded_file)
+            store_sentences_tokenize = SentenceTokenize.objects.create(file=store_file, task=sentences)
             context['sentences'] = sentences
             print('File name:', file_name)
         else:

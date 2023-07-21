@@ -1,0 +1,41 @@
+Properties Of Evaluation Instruments
+
+Evalution is quantitative as well as qualitative in nature and uses a wide variety of evaluation tools to archive its purpose.
+
+Properties Of Evaluation Instruments
+Commonly accepted qualities of good evaluation tools.
+- Validity
+- Reliability
+- Objectivity
+- Adequacy
+- Discrimimnation Power
+- Practicability
+- Comparability
+- Utility
+
+i) Validity
+- The validity of a test may be defined as the accuracy with which the test measures what it purports to measure.
+- According to Garrett, “ The validity of a test depends upon the fidelity with which it measures what it intends to measure”
+- Every test is contructed for some specific purpose and it is valid only for that purpose.
+Types Of Validity
+* Face Validity: It implies that a test measures superficially what the test-maker desires to measure, and not what it actually measures. This type of validity has very little significance.
+* Content Validity: It refers to the degree to which a test sample the content area which is to be measured.
+* Predictive Validity:  It refers to the extent to which a test can predict the future performance of individuals.
+* Concurrent Validity:  It refers to the relationship between scores on a measuring tool and a criterion available at the same time. The concurrent validity differs from predictive validity only on time dimension.
+* Construct Validity: It refers to the extent to which a test reflects, contructs presumed to underlie the test performance and also the extent to which it is based on theories regarding these constructs.
+Method Of Determining Validity Of A Test
+Method Of determing validity of an achievement test are:
+- Correlating it with another test
+- Correlating with teacher rating
+- Item Analysis
+
+ii) Reliability
+- Reliability of a test is the consistency with which the test measure whatever it does measure.
+- A reliability test is a thrust worthy test
+- A reliability test should yield essentially the same (or almost same) score when administered a second time to the people, provieded no learning or forgetting has taken place between the periods of the two testing.
+- The degree of reliability is usually denoted by a cofficient of correlation / reliability coefficient.
+
+Reliability depends on the following factors:
+    • Appropriateness and definiteness of the task
+    • Consistency, stability, alertness state of the people who takes the test.
+    • Consistency and objectivity of the scorer of the test
