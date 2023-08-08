@@ -1,4 +1,6 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
 
 <!-- component -->
 <style>
@@ -415,6 +417,18 @@
     <!-- ./Sidebar -->
 
     <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
+      <!----------------------------------------------------------- message tag ------------------------------------------------------------------------->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flex {% if message.tags == 'error' %} bg-red-100 {% else %} bg-green-100{% endif %} rounded-lg p-4 my-4 mx-4 text-sm {% if message.tags == 'error' %} text-red-700 {% else %} text-green-700{% endif %}" role="alert">
+            <svg class="w-5 h-5 inline mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            <div>
+                <span class="font-medium">{{message}}
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+      <!----------------------------------------------------------- end of message tag -------------------------------------------------------------------->
       <!-- Statistics Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 p-4 gap-4">
         <div
@@ -499,7 +513,7 @@
             </svg>
             <!-- <div id="modal-bg" class="absolute right-6 text-2xl text-gray-900 rotate-90 font-semibold cursor-pointer px-4 py-2 top-3"> X</div> -->
             <span class="text-xs font-medium w-full lg:w-8/12 mt-2">only .txt files are accpected</span>
-            <form action="" method="POST" enctype="multipart/form-data" class="w-full lg:w-8/12">
+            <form action="/home/" name="form1" method="POST" enctype="multipart/form-data" class="w-full lg:w-8/12">
                 {% csrf_token %}
                 <input type="file" name="file" class="w-full p-2 bg-blue-200 rounded-md  border border-gray-700 focus:border-blue-800" id="">
                 <button id="modal-close" class="p-3 mt-7 bg-[#4F46E5] rounded-lg w-full text-white">Upload file</button>
@@ -531,44 +545,58 @@
                 </svg>
             </div>
             <div class="text-sm text-black dark:text-gray-50 mt-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
-                {% for sentence in sentences %}
-                  {% comment %}
+                {% if all_task|length %}
+                  {% for task in all_task %}
+                    <div onclick="document.getElementById('myModal').showModal()" id="btn" class="bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded mt-1 border-b border-gray-100 dark:border-gray-900 cursor-pointer todo-task">
+                      {{task}}
+                      
+                    </div>
+                  {% endfor %}
+
+                    <!-- modal -->
+                    <dialog id="myModal" class="h-auto w-11/12 md:w-1/2 p-5  bg-white rounded-md ">
+                        <div class="flex flex-col w-full h-auto ">
+                            <!-- Header -->
+                            <div class="flex w-full h-auto justify-center items-center">
+                              <div class="flex w-10/12 h-auto py-3 justify-center items-center text-2xl font-bold">
+                                    Translate this Sentence
+                              </div>
+                              <div onclick="document.getElementById('myModal').close();" class="flex w-1/12 h-auto justify-center cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                              </div>
+                              <!--Header End-->
+                            </div>
+                              <div class="mt-5">
+                                <!-- Modal Content-->
+                                <div name="task" class="flex w-full h-auto py-10 px-2 justify-center items-center bg-gray-200 rounded text-center text-gray-500 mb-4 modal-card">
+                                    
+                                </div>
+                                <!-- End of Modal Content-->
+                                <form action="/home/" name="form2" method="POST">
+                                  {% csrf_token %}
+                                  <input type="text" name="task" value="" id="" class="task-translate" hidden>
+                                  <span class="mt-4">choose language</span>
+                                  <div id="radioButtonsContainer" user_lan="{{list_lan}}" class="mb-0 mt-2"></div>
+                                  <div class="mb-3">
+                                    <textarea id="email" name="translation" placeholder="Translate Text Here" class="mt-2 flex w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none border-gray-200" rows="4"></textarea>
+                                  </div>
+                                  <button
+                                    class="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                    data-ripple-light="true"
+                                    >
+                                    Submit
+                                  </button>
+                                </form>
+                              </div>
+                        </div>
+                    </dialog>
+                {% else %}
                   <div
                   class="bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded mt-1 border-b border-gray-100 dark:border-gray-900 cursor-pointer"
                   >
-                  {{sentence}}
+                  No Task Avaliable yet
                   </div>
-                  {% endcomment %}
-                  <div onclick="document.getElementById('myModal').showModal()" id="btn" class="bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded mt-1 border-b border-gray-100 dark:border-gray-900 cursor-pointer">
-                    {{sentence}}
-                  </div>
-                  <dialog id="myModal" class="h-auto w-11/12 md:w-1/2 p-5  bg-white rounded-md ">
-        
-                    <div class="flex flex-col w-full h-auto ">
-                         <!-- Header -->
-                         <div class="flex w-full h-auto justify-center items-center">
-                           <div class="flex w-10/12 h-auto py-3 justify-center items-center text-2xl font-bold">
-                                 Modal Header
-                           </div>
-                           <div onclick="document.getElementById('myModal').close();" class="flex w-1/12 h-auto justify-center cursor-pointer">
-                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                           </div>
-                           <!--Header End-->
-                         </div>
-                           <!-- Modal Content-->
-                            <div class="flex w-full h-auto py-10 px-2 justify-center items-center bg-gray-200 rounded text-center text-gray-500">
-                              This is a text inside the modal. You can add your content here.
-                           </div>
-                           <!-- End of Modal Content-->
-                         </div>
-                 </dialog>
-
-                {% endfor %}
-                <div
-                class="bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded mt-1 border-b border-gray-100 dark:border-gray-900 cursor-pointer"
-                >
-                Remove analytics code
-                </div>
+                {% endif %}
             </div>
             </div>
         </div>
@@ -1366,5 +1394,5 @@
         modalbg.classList.remove('hidden')
     });
 </script>
-
+<script src="{% static 'js/modal.js' %}"></script>
 {% endblock %}

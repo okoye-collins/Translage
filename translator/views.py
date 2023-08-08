@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from accounts.models import UserProfile
 from accounts.forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 import nltk
-from .models import SentenceTokenize, File
+from .models import SentenceTokenize, File, Translation, TextToTranslate
+import json
 
 # Create your views here.
 
@@ -57,22 +58,59 @@ def home(request):
         user_langauge.append('Igbo')
     if user_profile.is_Yoruba:
         user_langauge.append('Yoruba')
-    context = {}
-    if request.method == 'POST' and request.FILES['file']:
-        file = request.FILES.get('file')
-        if file is not None and file.name.endswith(".txt"):
-            file_name = file.name
-            uploaded_file = request.FILES['file']
-            file_contents = uploaded_file.read().decode('utf-8')
-            sentences = tokenize_sentences(file_contents)
-            store_file = File.objects.create(file=uploaded_file)
-            store_sentences_tokenize = SentenceTokenize.objects.create(file=store_file, task=sentences)
-            context['sentences'] = sentences
-            print('File name:', file_name)
+
+    all_task = []
+    tasks = SentenceTokenize.objects.all()
+    for task in tasks:
+        all_task += task.task
+
+    if request.method == 'POST':
+        if 'file' in request.FILES:
+            file = request.FILES.get('file')
+            if file is not None and file.name.endswith(".txt"):
+                file_name = file.name
+                uploaded_file = request.FILES['file']
+                file_contents = uploaded_file.read().decode('utf-8')
+                sentences = tokenize_sentences(file_contents)
+                store_file = File.objects.create(file=uploaded_file)
+                store_sentences_tokenize = SentenceTokenize.objects.create(file=store_file, task=sentences)
+                return redirect('.')
+            else:
+                messages.error(request, "This file format is not supported")
+                return redirect('.')
         else:
-            print('--------This file format is not supported')
-            messages.error(request, "This file format is not supported")
-    
-    context['languages']= user_langauge
+            task = request.POST['task']
+            language = request.POST['options'] 
+            translation = request.POST['translation']
+            text_to_translate, created = TextToTranslate.objects.get_or_create(text=task)
+
+            if created:
+                translation, created = Translation.objects.get_or_create(translator=user_profile, totranslate=text_to_translate, language=language, translation=translation)
+                
+                if created:
+                    messages.success(request, "you have successfully translated the task.")
+                else:
+                    messages.error(request, "you can already translated this task for the selected language.")
+            else:
+                try:
+                    get_translation = Translation.objects.get(translator=user_profile, totranslate=text_to_translate, language=language)
+                    messages.error(request, "you can already translated this task for the selected language.")
+                except Translation.DoesNotExist:
+                    translation, created = Translation.objects.get_or_create(translator=user_profile, totranslate=text_to_translate, language=language, translation=translation)
+                    
+                    if created:
+                        messages.success(request, "you have successfully translated the task.")
+                    else:
+                        messages.error(request, "you have already translated this task for the selected language.")
+            
+            return redirect('.')
+
+    user_language_json = json.dumps(user_langauge)
+    context = {
+        'languages': user_langauge,
+        'list_lan': user_language_json,
+        'all_task': all_task,
+    }
+
     
     return render(request, 'translator/home.html', context)
