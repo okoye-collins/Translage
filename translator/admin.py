@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import File, SentenceTokenize, TextToTranslate, Translation
+from .models import SentenceTokenize,  File, Translation
 
 # class TranslationInline(admin.StackedInline):
 #     model = Translation
@@ -20,5 +20,4 @@ from .models import File, SentenceTokenize, TextToTranslate, Translation
 # Register your models here.
 admin.site.register(File)
 admin.site.register(SentenceTokenize)
-admin.site.register(TextToTranslate)
 admin.site.register(Translation)

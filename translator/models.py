@@ -12,10 +12,10 @@ class File(models.Model):
     
 class SentenceTokenize(models.Model):
     file = models.ForeignKey(File, on_delete=models.CASCADE)
-    task = JSONField()
+    task = models.CharField(max_length=300)
 
     def __str__(self):
-        return f'{self.file}- task'
+        return f'{self.task} -- {self.file.file}'
     
 
 LANGUAGE_CHOICES = (
@@ -25,18 +25,12 @@ LANGUAGE_CHOICES = (
     ('Hausa','Hausa'),
 )
 
-class TextToTranslate(models.Model):
-    text = models.TextField()
-
-    def __str__(self):
-        return f"{self.text}"
-
 
 class Translation(models.Model):
     translator = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    totranslate = models.ForeignKey(TextToTranslate, related_name='translations', on_delete=models.CASCADE)
+    totranslate = models.ForeignKey(SentenceTokenize, related_name='translations', on_delete=models.CASCADE)
     language = models.CharField(max_length=100, choices=LANGUAGE_CHOICES, default='english')
     translation = models.TextField()
 
     def __str__(self):
-        return f'{self.translator} -- transtation'
+        return f'{self.totranslate} -- {self.language} transtation'

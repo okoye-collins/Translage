@@ -35,10 +35,10 @@ function createRadioButtons(options) {
 
 TodoTask.forEach(task => {
     task.addEventListener('click', () => {
-        console.log(task.innerHTML)
         const ModalCard = document.querySelector('.modal-card')
         ModalCard.innerHTML = task.innerHTML
-        TaskInput.setAttribute('value', task.innerHTML.trim())
+        TaskInput.setAttribute('value', task.getAttribute('task_id'))
+        // TaskInput.setAttribute('value', task.innerHTML.trim())
         createRadioButtons(Options)
     })
 });

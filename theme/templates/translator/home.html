@@ -547,9 +547,8 @@
             <div class="text-sm text-black dark:text-gray-50 mt-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
                 {% if all_task|length %}
                   {% for task in all_task %}
-                    <div onclick="document.getElementById('myModal').showModal()" id="btn" class="bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded mt-1 border-b border-gray-100 dark:border-gray-900 cursor-pointer todo-task">
-                      {{task}}
-                      
+                    <div onclick="document.getElementById('myModal').showModal()" id="btn" task_id = {{task.id}} class="bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded mt-1 border-b border-gray-100 dark:border-gray-900 cursor-pointer todo-task">
+                      {{task.task}}
                     </div>
                   {% endfor %}
 
@@ -600,6 +599,90 @@
             </div>
             </div>
         </div>
+        
+<!-- ------------------------------------------------------------------------------ Display------------------------------------------------------------------------------------------------------------- -->
+
+        {% for lan, val in data.items %}  
+
+        <div class="md:col-span-2 xl:col-span-3">
+          <h3 class="text-lg font-semibold">
+          Task Done for {{lan}}
+          </h3>
+        </div>
+        <div class="md:col-span-2 xl:col-span-1">
+            <div class="rounded bg-gray-200 dark:bg-gray-800 p-3">
+            <div class="flex justify-between py-1 text-black dark:text-white">
+                <h3 class="text-sm font-semibold">Tasks Done</h3>
+                <svg
+                class="h-4 fill-current text-gray-600 dark:text-gray-500 cursor-pointer"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                >
+                <path
+                    d="M5 10a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4z"
+                />
+                </svg>
+            </div>
+            <div class="text-sm text-black dark:text-gray-50 mt-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+                {% if val|length %}
+                  {% for task in val %}
+                    <div onclick="document.getElementById('myModal').showModal()" id="btn" task_id = {{task.task_id}} class="bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded mt-1 border-b border-gray-100 dark:border-gray-900 cursor-pointer todo-task">
+                      {{task.task}} <br>
+                      <div style="background: rgb(38, 37, 37); padding: 1rem 1.5rem; margin-top: 0.5rem;">
+                        <small>Translation:</small><br>
+                        <p>{{task.translation}}</p>
+                      </div>
+                    </div>
+                  {% endfor %}
+
+                    <!-- modal -->
+                    <dialog id="myModal" class="h-auto w-11/12 md:w-1/2 p-5  bg-white rounded-md ">
+                        <div class="flex flex-col w-full h-auto ">
+                            <!-- Header -->
+                            <div class="flex w-full h-auto justify-center items-center">
+                              <div class="flex w-10/12 h-auto py-3 justify-center items-center text-2xl font-bold">
+                                    Translate this Sentence
+                              </div>
+                              <div onclick="document.getElementById('myModal').close();" class="flex w-1/12 h-auto justify-center cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                              </div>
+                              <!--Header End-->
+                            </div>
+                              <div class="mt-5">
+                                <!-- Modal Content-->
+                                <div name="task" class="flex w-full h-auto py-10 px-2 justify-center items-center bg-gray-200 rounded text-center text-gray-500 mb-4 modal-card">
+                                    
+                                </div>
+                                <!-- End of Modal Content-->
+                                <form action="/home/" name="form2" method="POST">
+                                  {% csrf_token %}
+                                  <input type="text" name="task" value="" id="" class="task-translate" hidden>
+                                  <span class="mt-4">choose language</span>
+                                  <div id="radioButtonsContainer" user_lan="{{list_lan}}" class="mb-0 mt-2"></div>
+                                  <div class="mb-3">
+                                    <textarea id="email" name="translation" placeholder="Translate Text Here" class="mt-2 flex w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none border-gray-200" rows="4"></textarea>
+                                  </div>
+                                  <button
+                                    class="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                    data-ripple-light="true"
+                                    >
+                                    Submit
+                                  </button>
+                                </form>
+                              </div>
+                        </div>
+                    </dialog>
+                {% else %}
+                  <div
+                  class="bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded mt-1 border-b border-gray-100 dark:border-gray-900 cursor-pointer"
+                  >
+                  No Task Avaliable yet
+                  </div>
+                {% endif %}
+            </div>
+            </div>
+        </div>
+        {% endfor %}
         <!-- <div>
             <div class="rounded bg-gray-200 dark:bg-gray-800 p-3">
             <div class="flex justify-between py-1 text-black dark:text-white">
