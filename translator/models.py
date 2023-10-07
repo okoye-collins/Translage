@@ -34,3 +34,10 @@ class Translation(models.Model):
 
     def __str__(self):
         return f'{self.totranslate} -- {self.language} transtation'
+
+class ViewTranslation(models.Model):
+    task = models.ForeignKey(Translation, on_delete=models.CASCADE)
+    review = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.task} -- {self.review}'

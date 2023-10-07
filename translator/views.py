@@ -7,6 +7,8 @@ from django.contrib.auth import authenticate, login, logout
 import nltk
 from .models import SentenceTokenize, File, Translation
 import json
+from django.http import JsonResponse, HttpResponse
+from django.core.paginator import Paginator, EmptyPage
 
 # Create your views here.
 
@@ -78,6 +80,10 @@ def home(request):
             TaskDoneID.append(task.totranslate.id)
 
     all_task = SentenceTokenize.objects.all().exclude(id__in=TaskDoneID)
+    paginator = Paginator(all_task, 12) 
+
+    page = request.GET.get('page')
+    all_task = paginator.get_page(page)
 
     data = { lan:[] for lan in user_langauge }
     for task in all_translated_task:
@@ -117,16 +123,100 @@ def home(request):
             return redirect('.')
 
     user_language_json = json.dumps(user_langauge)
-    context = {
-        'languages': user_langauge,
-        'list_lan': user_language_json,
-        'all_task': all_task,
-        'data': data,
-    }
 
-    
-    return render(request, 'translator/home.html', context)
+    if user_profile.role == "is_translator":
+        role = "Translator"
+    else:
+        role = "Reviewer"
+
+    if role == "Translator":
+        context = {
+            'user_profile': user_profile,
+            'languages': user_langauge,
+            'list_lan': user_language_json,
+            'all_task': all_task,
+            'data': data,
+            'all_translated_task': all_translated_task,
+            'role': role
+        }
+        return render(request, 'translator/home.html', context)
+    else:
+        # ================= Reviwer =================
+        all_translated_task_reviwer = Translation.objects.all()
+
+        data_r = { lan:[] for lan in user_langauge }
+        for task in all_translated_task_reviwer:
+            if task.language in data_r:
+                task_done = {'task_id':task.id, 'task': task.totranslate.task, 'translation': task.translation}
+                data_r[task.language].append(task_done) 
+
+        context = {
+            'user_profile': user_profile,
+            'languages': user_langauge,
+            'list_lan': user_language_json,
+            'all_task': all_task,
+            'data': data_r,
+            'all_translated_task': all_translated_task,
+            'role': role
+        }
+        return render(request, 'reviewer/reviewer_home.html', context)
 
 def post_translated_task(request):
-    print('-----------', request.POST)
     return redirect('')
+
+def edit_task(request, id):
+    task = get_object_or_404(Translation, id=id)
+    if request.method == 'POST':
+        task.translation = request.POST['translation']
+        task.save()
+        messages.success(request, 'Task translation was updated successfully.')
+        return JsonResponse({'translation': task.translation})
+    
+    return JsonResponse({'error': 'task does not exist'})
+
+def delete_task(request, id):
+    task = get_object_or_404(Translation, id=id)
+    if request.method == 'DELETE':
+        task.delete()
+        messages.success(request, 'Task translation was deleted successfully.')
+    
+    return JsonResponse({'error': 'task does not exist'})
+
+
+def landing_page(request):
+    return render(request, '')
+
+
+def download_translation(request, file_name):
+    try:
+        userprofile = UserProfile.objects.get(user=request.user)
+        translations = Translation.objects.filter(translator=userprofile)
+        work_done = { task.totranslate.task : task.translation for task in translations}
+
+        file_path = 'output.txt'
+
+        with open(file_path, 'w') as file:
+            for i, (key, value) in enumerate(work_done.items(), start=1):
+                file.write(f"{i}. Task: {key}\n\n   Translation: {value}\n\n")
+
+        # Create an HTTP response with the file as an attachment
+        with open(file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type='text/plain')
+
+        # Set the content-disposition header to force a download
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+
+        return response
+
+    except UserProfile.DoesNotExist:
+        # Handle the case where the UserProfile does not exist
+        return HttpResponse("UserProfile not found.", status=404)
+
+    except Exception as e:
+        # Handle other exceptions
+        return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
+
+def rate_task(request):
+    print('=========', request.POST)
+    return JsonResponse({'message': 'ok Im ready'})

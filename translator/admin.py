@@ -17,7 +17,15 @@ from .models import SentenceTokenize,  File, Translation
 #     model = Translation
 #     list_display = ['totranslate','language','translation']
 
+class Translationinline(admin.TabularInline):
+    model = Translation
+
+class SentenceTokenizeAdmin(admin.ModelAdmin):
+    inlines = [Translationinline]
+    class Meta:
+        model = SentenceTokenize
+
 # Register your models here.
 admin.site.register(File)
-admin.site.register(SentenceTokenize)
+admin.site.register(SentenceTokenize, SentenceTokenizeAdmin)
 admin.site.register(Translation)
